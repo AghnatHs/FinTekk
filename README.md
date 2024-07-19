@@ -1,5 +1,5 @@
 ## FinTekk
-FinTekk is a daily financial management application, users can see how their income and expenses are every day.
+FinTekk is a daily financial management application, users can see how and where their income and expenses are every day.
 
 ### Flutter Tech Stack
 - [Flutter](https://flutter.dev/ "Flutter") 
