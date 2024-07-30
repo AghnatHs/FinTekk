@@ -53,7 +53,10 @@ class ReportByMonthByType {
       );
     }
 
-    return maps;
+    final sortedMaps = maps.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
+    Map<String, int> newMaps = {for (var entry in sortedMaps) entry.key: entry.value};
+
+    return newMaps;
   }
 }
 

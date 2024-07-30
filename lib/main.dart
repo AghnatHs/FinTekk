@@ -38,7 +38,6 @@ class App extends ConsumerWidget {
     return MaterialApp(
       title: 'FinTekk',
       scaffoldMessengerKey: globalSnackbarKey,
-      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: ColorConst.defaultAppColor),
         useMaterial3: true,

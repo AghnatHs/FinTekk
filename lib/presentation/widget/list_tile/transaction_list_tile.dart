@@ -48,7 +48,7 @@ class TransactionListTile extends ConsumerWidget {
             style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.black54),
           ),
           Text(
-            'Time: ${DateFormat().format(DateTime.parse(transaction.date!))}',
+            DateFormat('d MMM y hh:mm a').format(DateTime.parse(transaction.date!)),
             style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.black54),
           ),
         ],

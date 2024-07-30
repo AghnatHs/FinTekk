@@ -54,7 +54,6 @@ final reportByMonthByTypeProvider = Provider<ReportByMonthByType>((ref) {
     if (isSameDateByMonthAndYear && isSameType) filteredTransactions.add(transaction);
   }
 
-  filteredTransactions.sort((a, b) => a.date!.compareTo(b.date!));
   return ReportByMonthByType(
     monthYear: reportSelectedMonth,
     type: reportSelectedTransactionType,
@@ -78,7 +77,6 @@ final reportByMonthProvider = Provider<ReportByMonth>((ref) {
     if (isSameDateByMonthAndYear) filteredTransactions.add(transaction);
   }
 
-  filteredTransactions.sort((a, b) => a.date!.compareTo(b.date!));
   return ReportByMonth(monthYear: reportSelectedMonth, transactions: filteredTransactions);
 });
 
