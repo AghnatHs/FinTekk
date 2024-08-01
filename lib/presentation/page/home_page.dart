@@ -8,6 +8,7 @@ import 'package:fl_finance_mngt/presentation/widget/list_tile/account_list_tile.
 import 'package:fl_finance_mngt/presentation/widget/list_tile/transaction_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 // TODO : add color coded for each account and category
 
@@ -156,6 +157,11 @@ class HomePage extends ConsumerWidget {
           transactions.when(
             data: (transactions) {
               if (transactions.isNotEmpty) {
+                // group transaction based on date (month - year)
+                Set<Object> items = ref
+                    .watch(transactionProvider.notifier)
+                    .getGroupedTransactionsByDate(transactions);
+                // widget
                 return Flexible(
                   child: Scrollbar(
                     controller: transactionListScrollController,
@@ -164,14 +170,19 @@ class HomePage extends ConsumerWidget {
                     child: ListView.builder(
                       controller: transactionListScrollController,
                       shrinkWrap: true,
-                      itemCount: transactions.length,
+                      itemCount: items.length,
                       itemBuilder: (BuildContext context, int index) {
-                        Transactionn transaction = transactions[index];
+                        final item = items.elementAt(index);
 
-                        return TransactionListTile(
-                          transaction: transaction,
-                          isShowingOption: transactionTilesIsShowingOption,
-                        );
+                        return item is DateTime
+                            ? Text(
+                                DateFormat('d MMM y').format(item),
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              )
+                            : TransactionListTile(
+                                transaction: item as Transactionn,
+                                isShowingOption: transactionTilesIsShowingOption,
+                              );
                       },
                     ),
                   ),
@@ -184,7 +195,7 @@ class HomePage extends ConsumerWidget {
                 );
               }
             },
-            error: (e, st) => Center(child: Text(e.toString())),
+            error: (e, st) => const Center(child: Text('An Unexpected Error Occured')),
             loading: () => const Center(child: CircularProgressIndicator()),
           ),
         ],

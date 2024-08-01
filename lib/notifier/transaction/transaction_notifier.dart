@@ -73,4 +73,17 @@ class TransactionNotifier extends AsyncNotifier<List<Transactionn>> {
     await db!.deleteTransaction(transactionId);
     ref.invalidateSelf();
   }
+
+  Set<Object> getGroupedTransactionsByDate(List<Transactionn> transactions) {
+    final Set<Object> items = {};
+
+    for (Transactionn transaction in transactions) {
+      DateTime transactionDate = DateTime.parse(transaction.date!);
+      DateTime parsedTransactionDate = DateTime(transactionDate.year, transactionDate.month, transactionDate.day);
+      items.add(parsedTransactionDate);
+      items.add(transaction);
+    }
+
+    return items;
+  }
 }
