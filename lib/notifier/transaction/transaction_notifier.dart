@@ -30,6 +30,7 @@ class TransactionNotifier extends AsyncNotifier<List<Transactionn>> {
       required String description,
       required String type,
       required String category,
+      required int categoryColor,
       required String account}) async {
     String id = 'transaction-${const Uuid().v7()}';
     await db!.addTransaction(Transactionn(
@@ -41,6 +42,7 @@ class TransactionNotifier extends AsyncNotifier<List<Transactionn>> {
         description: description,
         type: type,
         category: category,
+        categoryColor: categoryColor,
         account: account));
     ref.invalidateSelf();
   }
@@ -54,6 +56,7 @@ class TransactionNotifier extends AsyncNotifier<List<Transactionn>> {
     required String? description,
     required String? type,
     required String? category,
+    required int? categoryColor,
     required String? account,
   }) async {
     await db!.updateTransaction(Transactionn(
@@ -65,6 +68,7 @@ class TransactionNotifier extends AsyncNotifier<List<Transactionn>> {
         description: description,
         type: type,
         category: category,
+        categoryColor: categoryColor,
         account: account));
     ref.invalidateSelf();
   }
@@ -79,7 +83,8 @@ class TransactionNotifier extends AsyncNotifier<List<Transactionn>> {
 
     for (Transactionn transaction in transactions) {
       DateTime transactionDate = DateTime.parse(transaction.date!);
-      DateTime parsedTransactionDate = DateTime(transactionDate.year, transactionDate.month, transactionDate.day);
+      DateTime parsedTransactionDate =
+          DateTime(transactionDate.year, transactionDate.month, transactionDate.day);
       items.add(parsedTransactionDate);
       items.add(transaction);
     }

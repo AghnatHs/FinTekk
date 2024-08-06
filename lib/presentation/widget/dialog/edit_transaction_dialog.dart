@@ -193,6 +193,7 @@ class EditTransactionDialogState extends ConsumerState<EditTransactionDialog> {
                                   description: descriptionTextController.text,
                                   type: type,
                                   category: '',
+                                  categoryColor: 0,
                                   account: '',
                                 );
                             pushGlobalSnackbar(message: 'Transaction successfully edited');

@@ -25,15 +25,15 @@ class TransactionCategoryNotifier extends AsyncNotifier<List<TranscactionCategor
     return transactionCategories;
   }
 
-  void addTransactionCategory({required String name}) async {
+  void addTransactionCategory({required String name, required int color}) async {
     String id = 'tsctgry-${const Uuid().v7()}';
-    await db!.addTransactionCategory(TranscactionCategory(id: id, name: name));
+    await db!.addTransactionCategory(TranscactionCategory(id: id, name: name, color: color));
     ref.invalidateSelf();
   }
 
   void updateTransactionCategory(
-      {required String transactionCategoryId, required String newName}) async {
-    await db!.updateTransactionCategory(transactionCategoryId, newName);
+      {required String transactionCategoryId, required String newName, required int newColor}) async {
+    await db!.updateTransactionCategory(transactionCategoryId, newName, newColor);
     ref.invalidateSelf();
     ref.invalidate(transactionProvider);
   }

@@ -25,7 +25,8 @@ class TransactionListTile extends ConsumerWidget {
             text: currencyFormat(transaction.amount.toString(), transaction.type),
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   fontSize: 18,
-                  color: transaction.type == TransactionConst.income ? Colors.green : Colors.red,
+                  color:
+                      transaction.type == TransactionConst.income ? Colors.green : Colors.red,
                 ),
             children: [
               TextSpan(
@@ -44,10 +45,21 @@ class TransactionListTile extends ConsumerWidget {
               '"${transaction.description == '' ? 'No Description' : transaction.description!}"',
               style: Theme.of(context).textTheme.bodySmall,
             ),
-            Text(
-              'Category: ${transaction.category}',
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.black54),
+            RichText(
+              text: TextSpan(
+                  text: 'Category: ',
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.black54),
+                  children: [
+                    TextSpan(
+                      text: transaction.category,
+                      style: TextStyle(color: Color(transaction.categoryColor!))
+                    )
+                  ]),
             ),
+            /* Text(
+              'Category: ${transaction.category}',
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Color(transaction.categoryColor!)),
+            ), */
             Text(
               DateFormat('HH:mm').format(DateTime.parse(transaction.date!)),
               style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.black54),

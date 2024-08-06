@@ -2,8 +2,10 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:fl_finance_mngt/core/constants.dart';
 import 'package:fl_finance_mngt/core/helper.dart';
 import 'package:fl_finance_mngt/model/report_model.dart';
+import 'package:fl_finance_mngt/model/transaction_category_model.dart';
 import 'package:fl_finance_mngt/notifier/report/report_notifier.dart';
 import 'package:fl_finance_mngt/notifier/transaction/transaction_notifier.dart';
+import 'package:fl_finance_mngt/notifier/transaction_category/transaction_category_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -28,6 +30,9 @@ class ReportPageState extends ConsumerState<ReportPage> {
     Map<String, int> categoryBalanceMap = reportByMonthType.getCategoryBalance();
 
     ReportByMonth reportByMonth = ref.watch(reportByMonthProvider);
+
+    List<TranscactionCategory> transactionCategories =
+        ref.watch(transactionCategoryProvider).value!;
 
     return ref.watch(transactionProvider).value!.isEmpty
         ? const Center(
@@ -146,7 +151,7 @@ class ReportPageState extends ConsumerState<ReportPage> {
                                                           value: value,
                                                           radius: 50,
                                                           color:
-                                                              Theme.of(context).primaryColor,
+                                                              Color(transactionCategories.where((e) => e.name! == category).first.color!                                       ),
                                                           titleStyle: const TextStyle(
                                                               fontSize: 9,
                                                               fontWeight: FontWeight.bold,

@@ -42,6 +42,13 @@ Map<int, String> dbMigrations = {
       INSERT INTO Account(account_id, name)
       VALUES("account-${const Uuid().v7()}", "Savings")
      ''',
+  7: '''
+     ALTER TABLE TransactionCategory ADD color INTEGER
+     ''',
+  8: '''
+     UPDATE TransactionCategory
+     SET color = 4278190080
+     ''', 
 };
 
 class DatabaseHelper {
@@ -78,17 +85,17 @@ class DatabaseHelper {
 
   Future<int> addTransactionCategory(TranscactionCategory transactionCategory) async {
     return await database.rawInsert('''
-       INSERT INTO TransactionCategory(transaction_category_id, name) 
-       VALUES (?, ?)
-    ''', [transactionCategory.id, transactionCategory.name]);
+       INSERT INTO TransactionCategory(transaction_category_id, name, color) 
+       VALUES (?, ?, ?)
+    ''', [transactionCategory.id, transactionCategory.name, transactionCategory.color]);
   }
 
-  Future<int> updateTransactionCategory(String transactionCategoryId, String newName) async {
+  Future<int> updateTransactionCategory(String transactionCategoryId, String newName, int newColor) async {
     return await database.rawUpdate('''
       UPDATE TransactionCategory
-      SET name = ?
+      SET name = ?, color = ?
       WHERE transaction_category_id = ?
-    ''', [newName, transactionCategoryId]);
+    ''', [newName, newColor, transactionCategoryId]);
   }
 
   // >-- Account
@@ -125,6 +132,7 @@ class DatabaseHelper {
           description,
           type,
           TransactionCategory.name AS category,
+          TransactionCategory.color AS categoryColor,
           Account.name AS account
       FROM Transactionz
       INNER JOIN (TransactionCategory) ON

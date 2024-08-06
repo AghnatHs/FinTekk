@@ -183,6 +183,7 @@ class InputTransactionDialogState extends ConsumerState<InputTransactionDialog> 
                                   description: descriptionTextController.text,
                                   type: type,
                                   category: '',
+                                  categoryColor: 0,
                                   account: '',
                                 );
                             pushGlobalSnackbar(message: 'Transaction added');

@@ -4,6 +4,7 @@ import 'package:fl_finance_mngt/notifier/transaction_category/transaction_catego
 import 'package:fl_finance_mngt/service/dialog_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class CategoryEditor extends ConsumerWidget {
   const CategoryEditor({super.key});
@@ -19,14 +20,18 @@ class CategoryEditor extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           ...List.generate(transactionCategories.length, (index) {
-            TranscactionCategory transcactionCategory = transactionCategories[index];
+            TranscactionCategory transactionCategory = transactionCategories[index];
             return ListTile(
               visualDensity: VisualDensity.compact,
-              title: Text(transcactionCategory.name!),
+              title: Text(transactionCategory.name!),
+              leading: Icon(
+                Icons.circle,
+                color: Color(transactionCategory.color!),
+              ),
               trailing: IconButton(
                 icon: const Icon(Icons.edit),
                 onPressed: () =>
-                    DialogService.pushEditCategoryDialog(context, transcactionCategory),
+                    DialogService.pushEditCategoryDialog(context, transactionCategory),
               ),
             );
           }),
@@ -50,26 +55,51 @@ class EditCategoryDialog extends ConsumerStatefulWidget {
 }
 
 class EditCategoryDialogState extends ConsumerState<EditCategoryDialog> {
-  final TextEditingController newCategoryNameController = TextEditingController();
+  final TextEditingController newCategoryNameController = TextEditingController(); //default
+  late Color newColor;
+
+  @override
+  void initState() {
+    super.initState();
+    newColor = Color(widget.category.color!);
+  }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text('Edit `${widget.category.name}` category',
           style: const TextStyle(fontSize: 20)),
-      contentPadding: const EdgeInsets.all(24),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextFormField(
-            controller: newCategoryNameController,
-            maxLength: 15,
-            decoration: const InputDecoration(labelText: 'Name'),
-            autovalidateMode: AutovalidateMode.always,
-            onChanged: (String? value) => setState(() {}),
-            validator: (String? value) => value == '' ? 'Enter a new name' : null,
+      contentPadding: const EdgeInsets.all(18),
+      content: Scrollbar(
+        thumbVisibility: true,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                controller: newCategoryNameController,
+                maxLength: 15,
+                decoration: const InputDecoration(labelText: 'Name'),
+                autovalidateMode: AutovalidateMode.always,
+                onChanged: (String? value) => setState(() {}),
+                validator: (String? value) => value == '' ? 'Enter a new name' : null,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Pick a Color',
+                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black54),
+              ),
+              const SizedBox(height: 10),
+              BlockPicker(
+                pickerColor: newColor,
+                onColorChanged: (color) => setState(() {
+                  newColor = color;
+                }),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
       actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
@@ -80,9 +110,9 @@ class EditCategoryDialogState extends ConsumerState<EditCategoryDialog> {
                     ref.read(transactionCategoryProvider.notifier).updateTransactionCategory(
                           transactionCategoryId: widget.category.id!,
                           newName: newCategoryNameController.text,
+                          newColor: newColor.value,
                         );
                     pushGlobalSnackbar(message: 'Category successfully edited');
-                    Navigator.pop(context);
                     Navigator.pop(context);
                   },
             child: const Text('Apply')),
@@ -100,37 +130,63 @@ class AddCategoryDialog extends ConsumerStatefulWidget {
 
 class AddCategoryDialogState extends ConsumerState<AddCategoryDialog> {
   final TextEditingController categoryNameController = TextEditingController();
+  late Color colorPick;
 
   @override
+  void initState() {
+    super.initState();
+    colorPick = Colors.blue;
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Add a new category', style: TextStyle(fontSize: 20)),
-      contentPadding: const EdgeInsets.all(24),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextFormField(
-            controller: categoryNameController,
-            maxLength: 15,
-            decoration: const InputDecoration(labelText: 'Name'),
-            autovalidateMode: AutovalidateMode.always,
-            onChanged: (String? value) => setState(() {}),
-            validator: (String? value) => value == '' ? 'Enter a name' : null,
+      contentPadding: const EdgeInsets.all(18),
+      content: Scrollbar(
+        thumbVisibility: true,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                controller: categoryNameController,
+                maxLength: 15,
+                decoration: const InputDecoration(labelText: 'Name'),
+                autovalidateMode: AutovalidateMode.always,
+                onChanged: (String? value) => setState(() {}),
+                validator: (String? value) => value == '' ? 'Enter a name' : null,
+              ),
+              const SizedBox(height: 10),
+              const Text('Pick a color',
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black54)),
+              const SizedBox(height: 10),
+              BlockPicker(
+                pickerColor: colorPick,
+                onColorChanged: (color) => setState(() {
+                  colorPick = color;
+                }),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
       actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
         TextButton(
-            onPressed: categoryNameController.text.isEmpty ? null : () {
-              showDialog(
-                  barrierColor: Colors.black54,
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (BuildContext context) =>
-                      AddCategoryConfirmationDialog(name: categoryNameController.value.text));
-            },
+            onPressed: categoryNameController.text.isEmpty
+                ? null
+                : () {
+                    showDialog(
+                        barrierColor: Colors.black54,
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (BuildContext context) => AddCategoryConfirmationDialog(
+                              name: categoryNameController.value.text,
+                              color: colorPick.value,
+                            ));
+                  },
             child: const Text('Add')),
       ],
     );
@@ -139,7 +195,8 @@ class AddCategoryDialogState extends ConsumerState<AddCategoryDialog> {
 
 class AddCategoryConfirmationDialog extends ConsumerWidget {
   final String name;
-  const AddCategoryConfirmationDialog({required this.name, super.key});
+  final int color;
+  const AddCategoryConfirmationDialog({required this.name, required this.color, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -162,7 +219,9 @@ class AddCategoryConfirmationDialog extends ConsumerWidget {
             child: const Text('Cancel')),
         TextButton(
             onPressed: () {
-              ref.read(transactionCategoryProvider.notifier).addTransactionCategory(name: name);
+              ref
+                  .read(transactionCategoryProvider.notifier)
+                  .addTransactionCategory(name: name, color: color);
               pushGlobalSnackbar(message: 'Category added');
               Navigator.pop(context);
               Navigator.pop(context);
