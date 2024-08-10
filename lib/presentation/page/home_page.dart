@@ -157,10 +157,12 @@ class HomePage extends ConsumerWidget {
           transactions.when(
             data: (transactions) {
               if (transactions.isNotEmpty) {
-                // group transaction based on date (month - year)
                 Set<Object> items = ref
                     .watch(transactionProvider.notifier)
                     .getGroupedTransactionsByDate(transactions);
+
+                Map<DateTime, int> dailySummaries =
+                    ref.watch(transactionProvider.notifier).getDailyTotalSummary(transactions);
                 // widget
                 return Flexible(
                   child: Scrollbar(
@@ -175,10 +177,32 @@ class HomePage extends ConsumerWidget {
                         final item = items.elementAt(index);
 
                         return item is DateTime
-                            ? Text(
+                            ? RichText(
+                                text: TextSpan(
+                                  text: DateFormat('d MMM y ').format(item),
+                                  style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
+                                  children: [
+                                    TextSpan(
+                                      text:
+                                          '- [${currencyFormat(dailySummaries[DateTime(item.year, item.month, item.day)].toString())}]',
+                                      style: TextStyle(
+                                        color: dailySummaries[DateTime(
+                                                        item.year, item.month, item.day)]!
+                                                    .sign >=
+                                                0
+                                            ? Colors.green
+                                            : Colors.red,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ) /* Text(
                                 DateFormat('d MMM y').format(item),
                                 style: const TextStyle(fontWeight: FontWeight.bold),
-                              )
+                              ) */
                             : TransactionListTile(
                                 transaction: item as Transactionn,
                                 isShowingOption: transactionTilesIsShowingOption,

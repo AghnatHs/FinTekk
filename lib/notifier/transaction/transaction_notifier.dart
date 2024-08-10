@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:fl_finance_mngt/core/constants.dart';
 import 'package:fl_finance_mngt/database/database.dart';
 import 'package:fl_finance_mngt/database/database_provider.dart';
 import 'package:fl_finance_mngt/model/transaction_model.dart';
@@ -90,5 +91,21 @@ class TransactionNotifier extends AsyncNotifier<List<Transactionn>> {
     }
 
     return items;
+  }
+
+  Map<DateTime, int> getDailyTotalSummary(List<Transactionn> transactions) {
+    final Map<DateTime, int> maps = {};
+
+    for (Transactionn transaction in transactions) {
+      DateTime tDate = DateTime.parse(transaction.date!);
+      DateTime tDateAsKey = DateTime(tDate.year, tDate.month, tDate.day);
+      int tAmount = transaction.type == TransactionConst.income
+          ? transaction.amount!
+          : transaction.amount! * -1;
+
+      maps.update(tDateAsKey, (value) => value + tAmount, ifAbsent: () => tAmount);
+    }
+
+    return maps;
   }
 }

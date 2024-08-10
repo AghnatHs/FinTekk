@@ -59,5 +59,3 @@ class ReportByMonthByType {
     return newMaps;
   }
 }
-
-// contains a list of transaction
