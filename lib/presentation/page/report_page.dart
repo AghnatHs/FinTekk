@@ -95,7 +95,7 @@ class ReportPageState extends ConsumerState<ReportPage> {
                       children: [
                         // [segmented button
                         Padding(
-                          padding: const EdgeInsets.only(top: 8),
+                          padding: const EdgeInsets.only(top: 12),
                           child: SegmentedButton(
                             segments: const [
                               ButtonSegment(
@@ -117,6 +117,14 @@ class ReportPageState extends ConsumerState<ReportPage> {
                                 },
                               );
                             },
+                            showSelectedIcon: false,
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all(
+                                const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                              ),
+                              visualDensity: const VisualDensity(horizontal: -3, vertical: -3),
+                              iconSize: MaterialStateProperty.all(0),
+                            ),
                           ),
                         ),
                         // piechart
@@ -150,8 +158,11 @@ class ReportPageState extends ConsumerState<ReportPage> {
                                                           title: category,
                                                           value: value,
                                                           radius: 50,
-                                                          color:
-                                                              Color(transactionCategories.where((e) => e.name! == category).first.color!                                       ),
+                                                          color: Color(transactionCategories
+                                                              .where(
+                                                                  (e) => e.name! == category)
+                                                              .first
+                                                              .color!),
                                                           titleStyle: const TextStyle(
                                                               fontSize: 9,
                                                               fontWeight: FontWeight.bold,

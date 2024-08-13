@@ -187,7 +187,7 @@ class HomePage extends ConsumerWidget {
                                   children: [
                                     TextSpan(
                                       text:
-                                          '- [${currencyFormat(dailySummaries[DateTime(item.year, item.month, item.day)].toString())}]',
+                                          ' [${currencyFormat(dailySummaries[DateTime(item.year, item.month, item.day)].toString())}]',
                                       style: TextStyle(
                                         color: dailySummaries[DateTime(
                                                         item.year, item.month, item.day)]!
