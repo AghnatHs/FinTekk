@@ -62,8 +62,8 @@ class ReportPageState extends ConsumerState<ReportPage> {
                                 .update((state) => monthOfIndex);
                           },
                           child: Container(
-                            margin: const EdgeInsets.all(3),
-                            padding: const EdgeInsets.all(4),
+                            margin: const EdgeInsets.all(0),
+                            padding: const EdgeInsets.all(5),
                             width: 100,
                             color: reportMonths.elementAt(index) == reportSelectedMonth
                                 ? ColorConst.defaultAppColor
@@ -83,7 +83,40 @@ class ReportPageState extends ConsumerState<ReportPage> {
                   ),
                 ),
               ),
-              // [Body] segmented, piechart, report details
+              Padding(
+                padding: const EdgeInsets.only(top: 12, bottom: 5),
+                child: SegmentedButton(
+                  segments: const [
+                    ButtonSegment(
+                        value: TransactionConst.income,
+                        label: Text('Income'),
+                        icon: Icon(null)),
+                    ButtonSegment(
+                        value: TransactionConst.expense,
+                        label: Text('Expense'),
+                        icon: Icon(null)),
+                  ],
+                  selected: {reportSelectedTranscationType},
+                  onSelectionChanged: (Set<String> newSelection) {
+                    setState(
+                      () {
+                        ref
+                            .read(reportSelectedTransactionTypeProvider.notifier)
+                            .update((state) => newSelection.first);
+                      },
+                    );
+                  },
+                  showSelectedIcon: false,
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all(
+                      const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                    ),
+                    visualDensity: const VisualDensity(horizontal: -3, vertical: -3),
+                    iconSize: MaterialStateProperty.all(0),
+                  ),
+                ),
+              ),
+              // [Body] piechart, report details
               Expanded(
                 child: Scrollbar(
                   controller: bodyScrollController,
@@ -93,40 +126,6 @@ class ReportPageState extends ConsumerState<ReportPage> {
                     physics: const ClampingScrollPhysics(),
                     child: Column(
                       children: [
-                        // [segmented button
-                        Padding(
-                          padding: const EdgeInsets.only(top: 12),
-                          child: SegmentedButton(
-                            segments: const [
-                              ButtonSegment(
-                                  value: TransactionConst.income,
-                                  label: Text('Income'),
-                                  icon: Icon(null)),
-                              ButtonSegment(
-                                  value: TransactionConst.expense,
-                                  label: Text('Expense'),
-                                  icon: Icon(null)),
-                            ],
-                            selected: {reportSelectedTranscationType},
-                            onSelectionChanged: (Set<String> newSelection) {
-                              setState(
-                                () {
-                                  ref
-                                      .read(reportSelectedTransactionTypeProvider.notifier)
-                                      .update((state) => newSelection.first);
-                                },
-                              );
-                            },
-                            showSelectedIcon: false,
-                            style: ButtonStyle(
-                              shape: MaterialStateProperty.all(
-                                const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-                              ),
-                              visualDensity: const VisualDensity(horizontal: -3, vertical: -3),
-                              iconSize: MaterialStateProperty.all(0),
-                            ),
-                          ),
-                        ),
                         // piechart
                         Container(
                           padding: const EdgeInsets.all(8),
@@ -185,7 +184,7 @@ class ReportPageState extends ConsumerState<ReportPage> {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 8),
+                            margin: const EdgeInsets.symmetric(horizontal: 16),
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                                 border: Border.all(color: Theme.of(context).primaryColor)),
@@ -219,8 +218,14 @@ class ReportPageState extends ConsumerState<ReportPage> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     const Text('Summary'),
-                                    Text(currencyFormat(
-                                        reportByMonth.getTotalSummary().toString()))
+                                    Text(
+                                      currencyFormat(
+                                          reportByMonth.getTotalSummary().toString()),
+                                      style: TextStyle(
+                                          color: reportByMonth.getTotalSummary() >= 0
+                                              ? Colors.green
+                                              : Colors.red),
+                                    )
                                   ],
                                 ),
                               ],
@@ -232,7 +237,7 @@ class ReportPageState extends ConsumerState<ReportPage> {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 8),
+                            margin: const EdgeInsets.symmetric(horizontal: 16),
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                                 border: Border.all(color: Theme.of(context).primaryColor)),
@@ -266,7 +271,7 @@ class ReportPageState extends ConsumerState<ReportPage> {
                               ],
                             ),
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),

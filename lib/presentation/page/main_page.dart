@@ -35,7 +35,7 @@ class MainPageState extends ConsumerState<MainPage> {
         title: Center(child: Text(pagesTitle[currentPageIndex])),
         surfaceTintColor: Theme.of(context).primaryColor,
       ),
-      body: Padding(padding: const EdgeInsets.all(8), child: pages[currentPageIndex]),
+      body: Padding(padding: EdgeInsets.all(currentPageIndex == 1 ? 0 : 8), child: pages[currentPageIndex]),
       bottomNavigationBar: NavigationBar(
         selectedIndex: currentPageIndex,
         onDestinationSelected: (int index) {

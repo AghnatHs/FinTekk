@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-// TODO : add color coded for each account and category
+// TODO : add color coded for each account 
 
 final localTransactionTilesShowOptionsState = StateProvider<bool>((ref) => false);
 
@@ -187,8 +187,9 @@ class HomePage extends ConsumerWidget {
                                   children: [
                                     TextSpan(
                                       text:
-                                          ' [${currencyFormat(dailySummaries[DateTime(item.year, item.month, item.day)].toString())}]',
+                                          ' (${currencyFormat(dailySummaries[DateTime(item.year, item.month, item.day)].toString())})',
                                       style: TextStyle(
+                                        backgroundColor: const Color.fromARGB(12, 0, 0, 0),
                                         color: dailySummaries[DateTime(
                                                         item.year, item.month, item.day)]!
                                                     .sign >=
