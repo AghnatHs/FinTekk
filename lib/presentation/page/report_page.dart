@@ -6,6 +6,7 @@ import 'package:fl_finance_mngt/model/transaction_category_model.dart';
 import 'package:fl_finance_mngt/notifier/report/report_notifier.dart';
 import 'package:fl_finance_mngt/notifier/transaction/transaction_notifier.dart';
 import 'package:fl_finance_mngt/notifier/transaction_category/transaction_category_notifier.dart';
+import 'package:fl_finance_mngt/presentation/widget/row/report_row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -25,7 +26,7 @@ class ReportPageState extends ConsumerState<ReportPage> {
   Widget build(BuildContext context) {
     Set<DateTime> reportMonths = ref.watch(reportMonthsListProvider).toList().reversed.toSet();
     DateTime reportSelectedMonth = ref.watch(reportSelectedMonthProvider);
-    String reportSelectedTranscationType = ref.watch(reportSelectedTransactionTypeProvider);
+    String reportSelectedTransactionType = ref.watch(reportSelectedTransactionTypeProvider);
     ReportByMonthByType reportByMonthType = ref.watch(reportByMonthByTypeProvider);
     Map<String, int> categoryBalanceMap = reportByMonthType.getCategoryBalance();
 
@@ -96,7 +97,7 @@ class ReportPageState extends ConsumerState<ReportPage> {
                         label: Text('Expense'),
                         icon: Icon(null)),
                   ],
-                  selected: {reportSelectedTranscationType},
+                  selected: {reportSelectedTransactionType},
                   onSelectionChanged: (Set<String> newSelection) {
                     setState(
                       () {
@@ -197,36 +198,31 @@ class ReportPageState extends ConsumerState<ReportPage> {
                                     color: Theme.of(context).primaryColor,
                                   ),
                                 ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text('Income'),
-                                    Text(currencyFormat(
-                                        reportByMonth.getTotalIncome().toString()))
-                                  ],
+                                ReportRow(
+                                    title: 'Income',
+                                    data: currencyFormat(
+                                        reportByMonth.getTotalIncome().toString())),
+                                ReportRow(
+                                  title: 'Expense',
+                                  data: currencyFormat(
+                                      reportByMonth.getTotalExpense().toString()),
                                 ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text('Expense'),
-                                    Text(currencyFormat(
-                                        reportByMonth.getTotalExpense().toString()))
-                                  ],
+                                ReportRow(
+                                  title: 'Average expense per day',
+                                  data: currencyFormat(
+                                      reportByMonth.getAverageDailyExpenses().toString(),
+                                      TransactionConst.expense),
                                 ),
                                 const Divider(),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text('Summary'),
-                                    Text(
-                                      currencyFormat(
-                                          reportByMonth.getTotalSummary().toString()),
-                                      style: TextStyle(
-                                          color: reportByMonth.getTotalSummary() >= 0
-                                              ? Colors.green
-                                              : Colors.red),
-                                    )
-                                  ],
+                                ReportRow(
+                                  title: 'Summary',
+                                  data: currencyFormat(
+                                      reportByMonth.getTotalSummary().toString()),
+                                  dataStyle: TextStyle(
+                                    color: reportByMonth.getTotalSummary() >= 0
+                                        ? Colors.green
+                                        : Colors.red,
+                                  ),
                                 ),
                               ],
                             ),
@@ -245,7 +241,7 @@ class ReportPageState extends ConsumerState<ReportPage> {
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 Text(
-                                  '$reportSelectedTranscationType Details (by Category)',
+                                  '$reportSelectedTransactionType Details (by category)',
                                   style: TextStyle(
                                     color: Theme.of(context).primaryColor,
                                   ),
@@ -258,13 +254,10 @@ class ReportPageState extends ConsumerState<ReportPage> {
                                   (index) {
                                     String category = categoryBalanceMap.keys.toList()[index];
                                     int value = categoryBalanceMap[category]!.toInt();
-                                    return Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(category),
-                                        Text(currencyFormat(
-                                            value.toString(), reportSelectedTranscationType)),
-                                      ],
+                                    return ReportRow(
+                                      title: category,
+                                      data: currencyFormat(
+                                          value.toString(), reportSelectedTransactionType),
                                     );
                                   },
                                 ),

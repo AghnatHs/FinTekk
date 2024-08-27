@@ -1,5 +1,6 @@
 import 'package:fl_finance_mngt/core/constants.dart';
 import 'package:fl_finance_mngt/model/transaction_model.dart';
+import 'package:flutter/material.dart';
 
 // contains a list of transaction that occur at selected month
 class ReportByMonth {
@@ -30,6 +31,9 @@ class ReportByMonth {
   }
 
   int getTotalSummary() => getTotalIncome() + getTotalExpense();
+
+  int getAverageDailyExpenses() =>
+      getTotalExpense() ~/ DateUtils.getDaysInMonth(monthYear.year, monthYear.month);
 }
 
 // contains a list of transaction that occur at selected month and selected transaction type
