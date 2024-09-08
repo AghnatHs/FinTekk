@@ -22,9 +22,9 @@ FinTekk is a daily financial management application, users can see how and where
 <table>
   <tbody>
     <tr>
-      <td><img src="github_screenshots/Screenshot_1721013168.png"/></td>
-      <td><img src="github_screenshots/screenshot1201.jpg"/></td>
-      <td><img src="github_screenshots/screenshot1202.jpg"/></td>
+      <td><img src="github_screenshots/screenshot1241.jpg"/></td>
+      <td><img src="github_screenshots/screenshot1242.jpg"/></td>
+      <td><img src="github_screenshots/screenshot1243.jpg"/></td>
     </tr>
   </tbody>
 </table>
