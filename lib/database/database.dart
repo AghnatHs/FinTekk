@@ -1,4 +1,5 @@
 import 'package:fl_finance_mngt/model/account_model.dart';
+import 'package:fl_finance_mngt/model/internal_transfer_model.dart';
 import 'package:fl_finance_mngt/model/transaction_category_model.dart';
 import 'package:fl_finance_mngt/model/transaction_model.dart';
 import 'package:sqflite/sqflite.dart';
@@ -48,7 +49,32 @@ Map<int, String> dbMigrations = {
   8: '''
      UPDATE TransactionCategory
      SET color = 4278190080
-     ''', 
+     ''',
+  9: '''
+      CREATE TABLE InternalTransfer(
+      internal_transfer_id TEXT PRIMARY KEY,
+      account_id TEXT NOT NULL,
+      amount INT NOT NULL,
+      type TEXT NOT NULL,
+      date TEXT NOT NULL,
+      FOREIGN KEY (account_id) REFERENCES Account (account_id) ON DELETE CASCADE ON UPDATE CASCADE
+      )
+     ''',
+  // WRONG TABLE DEFINITION
+  10: '''
+      DROP TABLE IF EXISTS InternalTransfer
+      ''',
+  11: '''
+      CREATE TABLE InternalTransfer(
+      internal_transfer_id TEXT PRIMARY KEY,
+      linked_transfer_id TEXT,
+      account_id TEXT NOT NULL,
+      amount INT NOT NULL,
+      type TEXT NOT NULL,
+      date TEXT NOT NULL,
+      FOREIGN KEY (account_id) REFERENCES Account (account_id) ON DELETE CASCADE ON UPDATE CASCADE
+      )
+     ''',
 };
 
 class DatabaseHelper {
@@ -177,5 +203,42 @@ class DatabaseHelper {
     return await database.rawDelete('''
         DELETE FROM Transactionz WHERE transaction_id = ? 
     ''', [transactionId]);
+  }
+
+  //>-- Internal Transfer
+  Future<List<Map>> getAllInternalTransfer() async {
+    return await database.rawQuery('''
+      SELECT
+        internal_transfer_id,
+        linked_transfer_id,
+        InternalTransfer.account_id,
+        amount,
+        type,
+        date,
+        Account.name as account_name 
+      FROM InternalTransfer
+      INNER JOIN(Account) ON
+      InternalTransfer.account_id = Account.account_id
+    ''');
+  }
+
+  Future<int> addInternalTransfer(InternalTransfer internalTransfer) async {
+    return await database.rawInsert('''
+      INSERT INTO InternalTransfer(internal_transfer_id,linked_transfer_id,account_id, amount, type, date)
+      VALUES (?,?,?,?,?,?)
+    ''', [
+      internalTransfer.id,
+      internalTransfer.linkedTransferId,
+      internalTransfer.accountId,
+      internalTransfer.amount,
+      internalTransfer.type,
+      internalTransfer.date
+    ]);
+  }
+  
+  Future<int> deleteInternalTransfer(String linkedTransferId) async {
+    return await database.rawDelete('''
+      DELETE FROM InternalTransfer WHERE linked_transfer_id = ?
+    ''', [linkedTransferId]);
   }
 }

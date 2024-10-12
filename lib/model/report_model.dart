@@ -12,7 +12,7 @@ class ReportByMonth {
     int income = 0;
     for (Transactionn transaction in transactions) {
       income = transaction.type == TransactionConst.income
-          ? income + transaction.amount!
+          ? income + transaction.amount
           : income + 0;
     }
 
@@ -23,7 +23,7 @@ class ReportByMonth {
     int expense = 0;
     for (Transactionn transaction in transactions) {
       expense = transaction.type == TransactionConst.expense
-          ? expense + transaction.amount!
+          ? expense + transaction.amount
           : expense + 0;
     }
 
@@ -49,9 +49,9 @@ class ReportByMonthByType {
     final Map<String, int> maps = {};
 
     for (Transactionn transaction in transactions) {
-      int amount = transaction.amount!;
+      int amount = transaction.amount;
       maps.update(
-        transaction.category!,
+        transaction.category,
         (value) => value + amount,
         ifAbsent: () => amount,
       );
