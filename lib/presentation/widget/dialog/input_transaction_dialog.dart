@@ -189,7 +189,7 @@ class InputTransactionDialogState extends ConsumerState<InputTransactionDialog> 
                             pushGlobalSnackbar(message: 'Transaction added');
                             Navigator.pop(context);
                           },
-                    child: Text('SAVE',
+                    child: Text('ADD',
                         style: TextStyle(
                             fontSize:
                                 Theme.of(context).appBarTheme.titleTextStyle!.fontSize! - 2)),

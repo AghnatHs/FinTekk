@@ -11,7 +11,7 @@ final reportMonthsListProvider =
     final Set<DateTime> state = {};
 
     for (Transactionn transaction in transactions) {
-      DateTime parsedDate = DateTime.parse(transaction.date!);
+      DateTime parsedDate = DateTime.parse(transaction.date);
       DateTime formattedParsedDate = DateTime(parsedDate.year, parsedDate.month);
       state.add(formattedParsedDate);
     }
@@ -42,12 +42,12 @@ final reportByMonthByTypeProvider = Provider<ReportByMonthByType>((ref) {
   final List<Transactionn> filteredTransactions = [];
 
   for (Transactionn transaction in transactions) {
-    DateTime tDate = DateTime.parse(transaction.date!);
+    DateTime tDate = DateTime.parse(transaction.date);
     int tDateYear = tDate.year;
     int tDateMonth = tDate.month;
     int rDateYear = reportSelectedMonth.year;
     int rDateMonth = reportSelectedMonth.month;
-    String tType = transaction.type!;
+    String tType = transaction.type;
     bool isSameDateByMonthAndYear = rDateYear == tDateYear && rDateMonth == tDateMonth;
     bool isSameType = tType == reportSelectedTransactionType;
 
@@ -67,7 +67,7 @@ final reportByMonthProvider = Provider<ReportByMonth>((ref) {
   final List<Transactionn> filteredTransactions = [];
 
   for (Transactionn transaction in transactions) {
-    DateTime tDate = DateTime.parse(transaction.date!);
+    DateTime tDate = DateTime.parse(transaction.date);
     int tDateYear = tDate.year;
     int tDateMonth = tDate.month;
     int rDateYear = reportSelectedMonth.year;

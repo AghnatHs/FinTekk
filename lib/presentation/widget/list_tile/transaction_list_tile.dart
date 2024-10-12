@@ -3,6 +3,7 @@ import 'package:fl_finance_mngt/core/globals.dart';
 import 'package:fl_finance_mngt/core/helper.dart';
 import 'package:fl_finance_mngt/model/transaction_model.dart';
 import 'package:fl_finance_mngt/notifier/transaction/transaction_notifier.dart';
+import 'package:fl_finance_mngt/presentation/widget/dialog/general_confirmation_dialog.dart';
 import 'package:fl_finance_mngt/service/dialog_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,10 +45,12 @@ class TransactionListTile extends ConsumerWidget {
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '"${transaction.description == '' ? 'No Description' : transaction.description!}"',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
+                transaction.description != ''
+                    ? Text(
+                        '"${transaction.description!}"',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      )
+                    : const Stack(),
                 RichText(
                   text: TextSpan(
                       text: 'Category: ',
@@ -62,7 +65,7 @@ class TransactionListTile extends ConsumerWidget {
                       ]),
                 ),
                 Text(
-                  DateFormat('HH:mm').format(DateTime.parse(transaction.date!)),
+                  DateFormat('HH:mm').format(DateTime.parse(transaction.date)),
                   style:
                       Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.black54),
                 ),
@@ -81,11 +84,20 @@ class TransactionListTile extends ConsumerWidget {
                         height: 10,
                       ),
                       InkWell(
-                        onTap: () {
-                          ref
-                              .read(transactionProvider.notifier)
-                              .deleteTransaction(transactionId: transaction.id!);
-                          pushGlobalSnackbar(message: 'Transaction deleted');
+                        onTap: () async {
+                          bool isConfirm = await showDialog(
+                            context: context,
+                            builder: (_) => GeneralConfimationDialog(
+                                title: 'Delete Transaction?',
+                                content:
+                                    'Are you sure you want to delete this transaction?\n${transaction.amount} - ${transaction.category} - ${transaction.type}\n${transaction.description}'),
+                          );
+                          if (isConfirm) {
+                            ref
+                                .read(transactionProvider.notifier)
+                                .deleteTransaction(transactionId: transaction.id);
+                            pushGlobalSnackbar(message: 'Transaction deleted');
+                          }
                         },
                         child: const Icon(Icons.delete, size: 30, color: Colors.redAccent),
                       )
@@ -100,7 +112,7 @@ class TransactionListTile extends ConsumerWidget {
           child: Container(
             width: 12,
             height: 30,
-            decoration: BoxDecoration(color: Color(transaction.categoryColor!)),
+            decoration: BoxDecoration(color: Color(transaction.categoryColor)),
           ),
         ),
       ],

@@ -1,16 +1,18 @@
+import 'package:fl_finance_mngt/model/abstracts/abstract_transaction_model.dart';
 import 'package:flutter/material.dart';
 
-class Transactionn {
-  String? id;
-  String? transactionCategoryId;
-  String? accountId;
-  String? date;
-  int? amount;
+class Transactionn implements TransactionObject {
+  String id;
+  String transactionCategoryId;
+  String accountId;
+  @override
+  String date;
+  int amount;
   String? description;
-  String? type;
-  String? category;
-  int? categoryColor;
-  String? account;
+  String type;
+  String category;
+  int categoryColor;
+  String account;
   Transactionn({
     required this.id,
     required this.transactionCategoryId,
@@ -76,6 +78,6 @@ class Transactionn {
 
   @override
   String toString() {
-    return 'Transaction [$id] $date $amount $description $type $category ${Color(categoryColor!)} $account  ';
+    return 'Transaction [$id] $date $amount $description $type $category ${Color(categoryColor)} $account  ';
   }
 }

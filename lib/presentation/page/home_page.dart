@@ -1,16 +1,17 @@
 import 'package:fl_finance_mngt/core/helper.dart';
 import 'package:fl_finance_mngt/model/account_model.dart';
+import 'package:fl_finance_mngt/model/internal_transfer_model.dart';
 import 'package:fl_finance_mngt/model/transaction_model.dart';
 import 'package:fl_finance_mngt/notifier/account/account_notifier.dart';
 import 'package:fl_finance_mngt/notifier/account/account_with_balance_notifier.dart';
+import 'package:fl_finance_mngt/notifier/internal_transfer/internal_transfer_notifier.dart';
 import 'package:fl_finance_mngt/notifier/transaction/transaction_notifier.dart';
 import 'package:fl_finance_mngt/presentation/widget/list_tile/account_list_tile.dart';
+import 'package:fl_finance_mngt/presentation/widget/list_tile/internal_transfer_list_tile.dart';
 import 'package:fl_finance_mngt/presentation/widget/list_tile/transaction_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-
-// TODO : add color coded for each account 
 
 final localTransactionTilesShowOptionsState = StateProvider<bool>((ref) => false);
 
@@ -27,6 +28,8 @@ class HomePage extends ConsumerWidget {
     List<Account>? accounts = ref.watch(accountProvider).value;
     Map<String, int> accountsBalance = ref.watch(accountBalanceProvider);
     int totalAccountBalance = ref.watch(totalAccountBalanceProvider);
+
+    List<InternalTransfer>? internalTransfers = ref.watch(internalTransferProvider).value;
 
     var transactions = ref.watch(transactionProvider);
     return Padding(
@@ -159,7 +162,8 @@ class HomePage extends ConsumerWidget {
               if (transactions.isNotEmpty) {
                 Set<Object> items = ref
                     .watch(transactionProvider.notifier)
-                    .getGroupedTransactionsByDate(transactions);
+                    .getGroupedTransactionsAndInternalTransfersByDate(
+                        transactions, internalTransfers!);
 
                 Map<DateTime, int> dailySummaries =
                     ref.watch(transactionProvider.notifier).getDailyTotalSummary(transactions);
@@ -175,39 +179,39 @@ class HomePage extends ConsumerWidget {
                       itemCount: items.length,
                       itemBuilder: (BuildContext context, int index) {
                         final item = items.elementAt(index);
-
-                        return item is DateTime
-                            ? RichText(
-                                text: TextSpan(
-                                  text: DateFormat('d MMM y ').format(item),
-                                  style: const TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                  children: [
-                                    TextSpan(
-                                      text:
-                                          ' (${currencyFormat(dailySummaries[DateTime(item.year, item.month, item.day)].toString())})',
-                                      style: TextStyle(
-                                        backgroundColor: const Color.fromARGB(12, 0, 0, 0),
-                                        color: dailySummaries[DateTime(
-                                                        item.year, item.month, item.day)]!
-                                                    .sign >=
-                                                0
-                                            ? Colors.green
-                                            : Colors.red,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ) /* Text(
-                                DateFormat('d MMM y').format(item),
-                                style: const TextStyle(fontWeight: FontWeight.bold),
-                              ) */
-                            : TransactionListTile(
-                                transaction: item as Transactionn,
-                                isShowingOption: transactionTilesIsShowingOption,
-                              );
+                        if (item is DateTime) {
+                          int dailySummary =
+                              dailySummaries[DateTime(item.year, item.month, item.day)] ?? 0;
+                          return RichText(
+                            text: TextSpan(
+                              text: DateFormat('d MMM y ').format(item),
+                              style: const TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16),
+                              children: [
+                                TextSpan(
+                                  text: ' (${currencyFormat(dailySummary.toString())})',
+                                  style: TextStyle(
+                                    backgroundColor: const Color.fromARGB(12, 0, 0, 0),
+                                    color: dailySummary.sign >= 0 ? Colors.green : Colors.red,
+                                  ),
+                                )
+                              ],
+                            ),
+                          );
+                        } else if (item is InternalTransfer) {
+                          return InternalTransferListTile(
+                            internalTransfer: item,
+                            isShowingOption: transactionTilesIsShowingOption,
+                          );
+                        } else if (item is Transactionn) {
+                          return TransactionListTile(
+                            transaction: item,
+                            isShowingOption: transactionTilesIsShowingOption,
+                          );
+                        }
+                        return const Stack();
                       },
                     ),
                   ),
