@@ -42,6 +42,8 @@ dependencies:
   flutter_expandable_fab: ^2.3.0
   settings_ui: ^2.0.2
   flutter_colorpicker: ^1.1.0
+  path_provider: ^2.1.5
+  permission_handler: ^12.0.1
 
 dev_dependencies:
   flutter_test:

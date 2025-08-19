@@ -12,7 +12,7 @@ class CategoryEditor extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     List<TranscactionCategory> transactionCategories =
-        ref.watch(transactionCategoryProvider).value!;
+        ref.watch(transactionCategoryProvider).value?? [];
     return AlertDialog(
       title: const Text('Category Editor', style: TextStyle(fontSize: 20)),
       contentPadding: const EdgeInsets.fromLTRB(8, 12, 0, 12),
@@ -110,7 +110,7 @@ class EditCategoryDialogState extends ConsumerState<EditCategoryDialog> {
                     ref.read(transactionCategoryProvider.notifier).updateTransactionCategory(
                           transactionCategoryId: widget.category.id!,
                           newName: newCategoryNameController.text,
-                          newColor: newColor.value,
+                          newColor: newColor.toARGB32(),
                         );
                     pushGlobalSnackbar(message: 'Category successfully edited');
                     Navigator.pop(context);
@@ -184,7 +184,7 @@ class AddCategoryDialogState extends ConsumerState<AddCategoryDialog> {
                         barrierDismissible: false,
                         builder: (BuildContext context) => AddCategoryConfirmationDialog(
                               name: categoryNameController.value.text,
-                              color: colorPick.value,
+                              color: colorPick.toARGB32(),
                             ));
                   },
             child: const Text('Add')),
